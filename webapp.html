@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Stats Game - Guess the Player!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .nav-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-link a {
+            color: #1e3c72;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #1e3c72;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-link a:hover {
+            background-color: #1e3c72;
+            color: white;
+        }
+
+        .stats-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .stat-label {
+            font-weight: bold;
+        }
+
+        .stat-value {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px 15px;
+            border-radius: 8px;
+        }
+
+        .input-section {
+            margin: 30px 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .result.correct {
+            background: #2ecc71;
+            color: white;
+            display: block;
+        }
+
+        .result.incorrect {
+            background: #e74c3c;
+            color: white;
+            display: block;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .hint {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 15px 0;
+        }
+
+        .new-game-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            margin-top: 15px;
+        }
+
+        .basketball-emoji {
+            font-size: 3em;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-link">
+            <a href="scratch.html">← Back to Scratch Page</a>
+        </div>
+
+        <h1>🏀 NBA Stats Challenge</h1>
+        <p class="subtitle">Can you guess the player based on their season statistics?</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-number" id="correct-count">0</div>
+                <div class="score-label">Correct</div>
+            </div>
+            <div class="score-item">
+                <div class="score-number" id="attempts-count">0</div>
+                <div class="score-label">Attempts</div>
+            </div>
+            <div class="score-item">
+                <div class="score-number" id="streak-count">0</div>
+                <div class="score-label">Streak</div>
+            </div>
+        </div>
+
+        <div class="stats-display" id="stats-display">
+            <div class="stat-row">
+                <span class="stat-label">Points Per Game:</span>
+                <span class="stat-value" id="ppg">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Rebounds Per Game:</span>
+                <span class="stat-value" id="rpg">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Assists Per Game:</span>
+                <span class="stat-value" id="apg">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Field Goal %:</span>
+                <span class="stat-value" id="fg">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Team:</span>
+                <span class="stat-value" id="team">--</span>
+            </div>
+        </div>
+
+        <p class="hint" id="hint">Hint: This player is known for their versatility!</p>
+
+        <div class="input-section">
+            <input type="text" id="player-guess" placeholder="Enter player name..." autocomplete="off">
+            <button onclick="checkGuess()">Submit Guess</button>
+            <button class="new-game-btn" onclick="newPlayer()">Skip / New Player</button>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        // NBA Players Database with realistic stats
+        const players = [
+            {
+                name: "LeBron James",
+                ppg: 25.7,
+                rpg: 7.3,
+                apg: 8.3,
+                fg: 54.0,
+                team: "Los Angeles Lakers",
+                hint: "Known as 'The King' and one of the greatest of all time"
+            },
+            {
+                name: "Stephen Curry",
+                ppg: 29.4,
+                rpg: 6.1,
+                apg: 6.3,
+                fg: 48.2,
+                team: "Golden State Warriors",
+                hint: "Revolutionary 3-point shooter who changed the game"
+            },
+            {
+                name: "Kevin Durant",
+                ppg: 29.1,
+                rpg: 6.7,
+                apg: 5.0,
+                fg: 51.4,
+                team: "Phoenix Suns",
+                hint: "7-footer with guard skills and deadly scoring ability"
+            },
+            {
+                name: "Giannis Antetokounmpo",
+                ppg: 31.1,
+                rpg: 11.8,
+                apg: 5.7,
+                fg: 55.3,
+                team: "Milwaukee Bucks",
+                hint: "The 'Greek Freak' known for his length and athleticism"
+            },
+            {
+                name: "Luka Doncic",
+                ppg: 32.4,
+                rpg: 8.6,
+                apg: 8.0,
+                fg: 49.6,
+                team: "Dallas Mavericks",
+                hint: "Young European superstar with exceptional court vision"
+            },
+            {
+                name: "Nikola Jokic",
+                ppg: 24.5,
+                rpg: 11.8,
+                apg: 9.8,
+                fg: 58.3,
+                team: "Denver Nuggets",
+                hint: "Two-time MVP center with incredible passing ability"
+            },
+            {
+                name: "Joel Embiid",
+                ppg: 33.1,
+                rpg: 10.2,
+                apg: 4.2,
+                fg: 54.8,
+                team: "Philadelphia 76ers",
+                hint: "Dominant center who can score from anywhere on the court"
+            },
+            {
+                name: "Damian Lillard",
+                ppg: 32.2,
+                rpg: 4.8,
+                apg: 7.3,
+                fg: 46.3,
+                team: "Milwaukee Bucks",
+                hint: "Known for hitting clutch shots from deep range"
+            },
+            {
+                name: "Jayson Tatum",
+                ppg: 30.1,
+                rpg: 8.8,
+                apg: 4.6,
+                fg: 46.6,
+                team: "Boston Celtics",
+                hint: "Young forward with a complete offensive game"
+            },
+            {
+                name: "Kawhi Leonard",
+                ppg: 23.7,
+                rpg: 6.1,
+                apg: 3.9,
+                fg: 51.2,
+                team: "LA Clippers",
+                hint: "Two-way star known for his defensive prowess and Finals MVP awards"
+            }
+        ];
+
+        let currentPlayer = null;
+        let correctCount = 0;
+        let attemptsCount = 0;
+        let streakCount = 0;
+
+        function newPlayer() {
+            currentPlayer = players[Math.floor(Math.random() * players.length)];
+            
+            document.getElementById('ppg').textContent = currentPlayer.ppg;
+            document.getElementById('rpg').textContent = currentPlayer.rpg;
+            document.getElementById('apg').textContent = currentPlayer.apg;
+            document.getElementById('fg').textContent = currentPlayer.fg + '%';
+            document.getElementById('team').textContent = currentPlayer.team;
+            document.getElementById('hint').textContent = 'Hint: ' + currentPlayer.hint;
+            
+            document.getElementById('player-guess').value = '';
+            document.getElementById('result').className = 'result';
+            document.getElementById('player-guess').disabled = false;
+        }
+
+        function checkGuess() {
+            const guess = document.getElementById('player-guess').value.trim().toLowerCase();
+            const correctName = currentPlayer.name.toLowerCase();
+            const result = document.getElementById('result');
+            
+            attemptsCount++;
+            document.getElementById('attempts-count').textContent = attemptsCount;
+            
+            // Check if guess matches (allowing for some flexibility)
+            const lastName = currentPlayer.name.split(' ')[1].toLowerCase();
+            
+            if (guess === correctName || guess === lastName || 
+                correctName.includes(guess) && guess.length > 3) {
+                result.className = 'result correct';
+                result.textContent = `🎉 Correct! It's ${currentPlayer.name}! 🏀`;
+                correctCount++;
+                streakCount++;
+                document.getElementById('correct-count').textContent = correctCount;
+                document.getElementById('streak-count').textContent = streakCount;
+                document.getElementById('player-guess').disabled = true;
+                
+                setTimeout(() => {
+                    newPlayer();
+                }, 3000);
+            } else {
+                result.className = 'result incorrect';
+                result.textContent = `❌ Not quite! The answer was ${currentPlayer.name}. Try the next one!`;
+                streakCount = 0;
+                document.getElementById('streak-count').textContent = streakCount;
+                document.getElementById('player-guess').disabled = true;
+                
+                setTimeout(() => {
+                    newPlayer();
+                }, 3000);
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('player-guess').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !this.disabled) {
+                checkGuess();
+            }
+        });
+
+        // Initialize game
+        newPlayer();
+    </script>
+</body>
+</html>
